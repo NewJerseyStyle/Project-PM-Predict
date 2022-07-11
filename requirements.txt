@@ -1,4 +1,6 @@
 tinydb
+asyncio
 pyppeteer
+pyppeteer_stealth
 nltk
 transformers
