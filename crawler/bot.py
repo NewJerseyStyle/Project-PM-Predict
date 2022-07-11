@@ -7,6 +7,9 @@ from tinydb import TinyDB, Query
 
 async def download_all_mps():
     db = TinyDB('db.json')
+    mp_db = db.table('mps')
+    if len(mp_db):
+        return
     browser = await launch(headless=True)
     page = await browser.newPage()
     await stealth(page)
@@ -35,24 +38,82 @@ async def download_all_mps():
         await page.waitForSelector('.card-contact-info')
         contact = await page.querySelector('.card-contact-info')
         contact_url = await page.evaluate('(element) => element.href', contact)
-        mp_data = {'name': name}
+        mp_data = {'name': name, 'twitter': None}
         if 'twitter' in contact_url:
             mp_data['twitter'] = contact_url
-        db.insert(mp_data)
+        mp_db.insert(mp_data)
         time.sleep(random.randint(3, 9))
     await browser.close()
 
 
 async def download_all_candidates():
     db = TinyDB('db.json')
+    pc_db = db.table('pcs')
+    if len(pc_db):
+        return
     browser = await launch(headless=True)
     page = await browser.newPage()
     await stealth(page)
-    # await page.screenshot({'path': 'example.png'})
+    await page.goto('https://www.oddschecker.com/politics/british-politics/next-prime-minister')
+    await page.waitForSelector('.selTxt')
+    pc_list = await page.querySelectorAll('.selTxt')
+    for element in pc_list:
+        name = await page.evaluate('(element) => element.href', element)
+        pc_db.insert({'name': name, 'names': list(name.split()) })
+    time.sleep(1)
     await browser.close()
+
+
+def get_all_powers():
+    power_list = ['John Gore',
+                 'Peter Hargreaves',
+                 'Lubov Chernukhin',
+                 'Ann Rosemary Said',
+                 'Lakshmi',
+                 'Usha Mittal',
+                 'Aquind.Ltd',
+                 'Unite',
+                 'Len McCluskey',
+                 'Ecotricity',
+                 'Harold Immanuel',
+                 'Christopher Harborne',
+                 'Jeremy Hosking',
+                 'AML Global',
+                 'Sherriff Group',
+                 'Noel Hayden',
+                 'Davide Serra',
+                 'Julian Dunkerton']
+    return power_list
+
+
+async def ask_google(pname):
+    db = TinyDB('db.json')
+    pc_db = db.table('pcs')
+    for pc in pc_db:
+        browser = await launch(headless=True)
+        page = await browser.newPage()
+        await stealth(page)
+        await page.goto('https://www.google.com/')
+        # google pname + pc.name; grap all result of first 2 page
+        # store data to db
+        pc_db.insert({'name': name, 'names': list(name.split()) })
+    # await page.screenshot({'path': 'example.png'})
+    time.sleep(1)
+    await browser.close()
+
+
+def do_search():
+    db = TinyDB('db.json')
+    mp_db = db.table('mps')
+    for mp in mp_db:
+        asyncio.get_event_loop().run_until_complete(ask_google(mp.name))
+    for name in get_all_powers():
+        asyncio.get_event_loop().run_until_complete(ask_google(name))
+
 
 def main():
     asyncio.get_event_loop().run_until_complete(download_all_mps())
+    asyncio.get_event_loop().run_until_complete(download_all_candidates())
 
 if __name__ == '__main__':
     main()
