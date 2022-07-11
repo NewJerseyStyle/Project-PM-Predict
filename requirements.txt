@@ -1,0 +1,4 @@
+tinydb
+pyppeteer
+nltk
+transformers
