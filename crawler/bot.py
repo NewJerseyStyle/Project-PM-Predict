@@ -93,8 +93,8 @@ async def ask_google(pname):
     User = Query()
     for pc in pc_db:
         at_db_list = []
-        if at_db.get(User.name == pc.name):
-            at_db_list = at_db.get(User.name == pc.name)['texts']
+        if at_db.get((User.name == pname) & (User.pc == pc.name)):
+            at_db_list = at_db.get(User.name == pname)['texts']
         for name in pc.names:
             browser = await launch(headless=True)
             page = await browser.newPage()
@@ -117,7 +117,7 @@ async def ask_google(pname):
             time.sleep(1)
             await browser.close()
         # store data to db
-        at_db.upsert({'name': pc.name, 'texts': at_db_list}, , User.name == pc.name)
+        at_db.upsert({'name': pname, 'pc': pc.name, 'texts': at_db_list}, , (User.name == pname) & (User.pc == pc.name))
 
 
 def do_search():
