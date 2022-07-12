@@ -16,7 +16,7 @@ Predict if johnson boris have to leave and who will become the new Prime Ministe
     > Write first 2 page search result to `TinyDB`
 5. Sentiment analysis and collect result by name of Prime Minister candidates
     > Read text from TinyDB and do analysis with `NLTK`/`huggingface`
-6. Quantize the supportness and see what a math model predicts
+6. Quantify the supportness and see what a math model predicts
     > Reuse the model from `magi-test`
 7. Output the name top 5 candidates
 
