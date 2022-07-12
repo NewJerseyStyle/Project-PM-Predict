@@ -59,7 +59,7 @@ async def download_all_candidates():
     pc_list = await page.querySelectorAll('.selTxt')
     for element in pc_list:
         name = await page.evaluate('(element) => element.href', element)
-        pc_db.insert({'name': name, 'names': list(name.split()) })
+        pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
     time.sleep(1)
     await browser.close()
 
@@ -89,17 +89,35 @@ def get_all_powers():
 async def ask_google(pname):
     db = TinyDB('db.json')
     pc_db = db.table('pcs')
+    at_db = db.table('articles')
+    User = Query()
     for pc in pc_db:
-        browser = await launch(headless=True)
-        page = await browser.newPage()
-        await stealth(page)
-        await page.goto('https://www.google.com/')
-        # google pname + pc.name; grap all result of first 2 page
+        at_db_list = []
+        if at_db.get(User.name == pc.name):
+            at_db_list = at_db.get(User.name == pc.name)['texts']
+        for name in pc.names:
+            browser = await launch(headless=True)
+            page = await browser.newPage()
+            await stealth(page)
+            # google pname + pc.name
+            await page.goto('https://www.google.com/')
+            await page.waitForXPath('/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
+            element = await page.xpath('/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
+            await page.evaluate('el => el.value = "{pname} {name}"', element)
+            await page.keyboard.press('Enter')
+            # grap all result of first 2 page
+            for _ in range(2):
+                await page.waitForSelector('.g')
+                article_list = await page.querySelectorAll('.g')
+                for element in article_list:
+                    article = await page.evaluate('(element) => element.classList.length > 1 ? "" : element.innerText', element)
+                    at_db_list.append(at_db_list)
+                element = await page.querySelector('a#pnnext')
+                await page.evaluate('(element) => element.click()', element)
+            time.sleep(1)
+            await browser.close()
         # store data to db
-        pc_db.insert({'name': name, 'names': list(name.split()) })
-    # await page.screenshot({'path': 'example.png'})
-    time.sleep(1)
-    await browser.close()
+        at_db.upsert({'name': pc.name, 'texts': at_db_list}, , User.name == pc.name)
 
 
 def do_search():
@@ -117,4 +135,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# C:\Users\David\AppData\Local\pyppeteer\pyppeteer\local-chromium\588429
