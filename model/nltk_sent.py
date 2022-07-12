@@ -40,7 +40,3 @@ def sentiment_analysis(text_list):
     neutral = percentage(neutral, len(text_list))
 
     return positive, neutral, negative
-
-
-def main():
-    pass
