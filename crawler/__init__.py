@@ -1,1 +1,1 @@
-from bot import main as run
+from .bot import main as run
