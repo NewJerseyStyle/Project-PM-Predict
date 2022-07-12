@@ -1,1 +1,1 @@
-from magi import run
+from .magi import run
