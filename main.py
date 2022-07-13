@@ -37,7 +37,8 @@ def main(args):
         for p in top5:
             tweet_n_ig(f'{p[0]}.png', post_delay=args.delay)
 
-        time.sleep(int(args.dalay))
+        # sleep 20 hours
+        time.sleep(20*60*60)
 
         flag = args.loop
         if datetime.now().date() < datetime.strptime('05/09/2022', '%d/%m/%Y').date():
