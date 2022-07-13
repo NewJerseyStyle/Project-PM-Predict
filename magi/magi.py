@@ -19,6 +19,8 @@ def takeSecond(elem):
 
 def run():
   ds_db = db.table('qips')
+  db.drop_table('ranks')
+  rs_db = db.table('ranks')
   results = []
   for ds in ds_db:
     l = []
@@ -32,4 +34,6 @@ def run():
                           weighted_median(x)))
                    ))
   results.sort(key=takeSecond)
-  return results[:5]
+  for name, score in results[-5:]:
+    rs_db.insert({'name': name, 'score': score})
+  return results[-5:]
