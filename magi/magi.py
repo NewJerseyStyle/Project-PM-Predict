@@ -35,5 +35,7 @@ def run():
                    ))
   results.sort(key=takeSecond)
   for name, score in results[-5:]:
-    rs_db.insert({'name': name, 'score': score})
+    rs_db.insert({'name': name,
+		  'a': weighted_mean(x),
+		  'b': weighted_median(x)})
   return results[-5:]
