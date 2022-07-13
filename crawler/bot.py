@@ -130,8 +130,16 @@ def do_search():
 
 
 def main():
+    # crawl name list
     asyncio.get_event_loop().run_until_complete(download_all_mps())
     asyncio.get_event_loop().run_until_complete(download_all_candidates())
+    # make sure Boris Johnson is on the list
+    db = TinyDB('db.json')
+    pc_db = db.table('pcs')
+    name = 'Boris Johnson'
+    pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
+    # crawl data
+    do_search()
 
 if __name__ == '__main__':
     main()
