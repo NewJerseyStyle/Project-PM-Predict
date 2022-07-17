@@ -4,6 +4,7 @@ import asyncio
 from pyppeteer import launch
 from pyppeteer_stealth import stealth
 from tinydb import TinyDB, Query
+from tqdm import tqdm
 
 async def download_all_mps():
     print('[download_all_mps] Start')
@@ -27,7 +28,7 @@ async def download_all_mps():
                 mp_link_list.append(href)
             print(f'[download_all_mps] Added {len(mp_list)} MP record')
 
-            time.sleep(random.randint(4, 6))
+            await asyncio.sleep(random.randint(1, 6))
 
             try:
                 mp_name_selector = '#main-content > div > article > div > div > div:nth-child(3) > div > div.col-md-7 > div > ul > li.next > a'
@@ -36,9 +37,17 @@ async def download_all_mps():
             except:
                 print('[download_all_mps] Cannot find next page, end loop')
                 continue_flag = False
+        await browser.close()
 
         print(f'[download_all_mps] Crawling {len(mp_link_list)} MP pages')
-        for url in mp_link_list:
+        # proxies = get_proxy_list()
+        browser = await launch(headless=True)
+        page = await browser.newPage()
+        await stealth(page)
+        for url in tqdm(mp_link_list):
+            # ip, port = random.choice(proxies).split(':')
+            # browser = await launch({'args': [f'--proxy-server={ip}:{port}'], 'headless': True })
+            await asyncio.sleep(random.randint(2, 7))
             await page.goto(url)
             mp_name_selector = '#main-content > div.hero-banner.hero-banner-brand > div > div > div.col-md-8.col-no-spacing > h1'
             await page.waitForSelector(mp_name_selector)
@@ -50,10 +59,8 @@ async def download_all_mps():
             if contact_url is not None and 'twitter' in contact_url:
                 mp_data['twitter'] = contact_url
             mp_db.insert(mp_data)
-            print(f'[download_all_mps] {name}')
-            time.sleep(random.randint(3, 9))
-        print('[download_all_mps] End...')
         await browser.close()
+        print('[download_all_mps] End...')
 
 
 async def download_all_candidates():
@@ -71,10 +78,10 @@ async def download_all_candidates():
         await page.waitForSelector('.selTxt')
         pc_list = await page.querySelectorAll('.selTxt')
         for element in pc_list:
-            name = await page.evaluate('(element) => element.href', element)
+            name = await page.evaluate('(element) => element.innerText', element)
             pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
         print(f'[download_all_candidates] Added {len(pc_list)} PM candidates')
-        time.sleep(1)
+        await asyncio.sleep(1)
         print('[download_all_candidates] End...')
         await browser.close()
 
@@ -107,24 +114,23 @@ async def ask_google(pname):
         pc_db = db.table('pcs')
         at_db = db.table('articles')
         User = Query()
-        for pc in pc_db:
-            print(f'[ask_google] Googling {pc.name}')
+        browser = await launch(headless=True)
+        page = await browser.newPage()
+        await stealth(page)
+        for pc in tqdm(pc_db):
+            tqdm.write(f'[ask_google] Googling {pc["name"]}')
             at_db_list = []
-            if at_db.get((User.name == pname) & (User.pc == pc.name)):
+            if at_db.get((User.name == pname) & (User.pc == pc['name'])):
                 at_db_list = at_db.get(User.name == pname)['texts']
-            for name in pc.names:
-                browser = await launch(headless=True)
-                page = await browser.newPage()
-                await stealth(page)
+            for name in tqdm(pc['names']):
                 # google pname + pc.name
                 await page.goto('https://www.google.com/')
-                await page.waitForXPath('/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
-                element = await page.xpath('/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input')
-                await page.evaluate('el => el.value = "{pname} {name}"', element)
+                await page.waitForSelector('input')
+                await page.type('input', f'{pname} {name}')
                 await page.keyboard.press('Enter')
                 # grap all result of first 2 page
                 for i in range(2):
-                    print(f'[ask_google] Adding Google page {i}')
+                    tqdm.write(f'[ask_google] Adding Google page {i} with {name}')
                     await page.waitForSelector('.g')
                     article_list = await page.querySelectorAll('.g')
                     for element in article_list:
@@ -132,13 +138,13 @@ async def ask_google(pname):
                         at_db_list.append(at_db_list)
                     element = await page.querySelector('a#pnnext')
                     if element is None:
-                        print('[ask_google] No next page, break')
+                        tqdm.write('[ask_google] No next page, break')
                         break
                     await page.evaluate('(element) => element.click()', element)
-                time.sleep(1)
-                await browser.close()
+                    await asyncio.sleep(3)
             # store data to db
-            at_db.upsert({'name': pname, 'pc': pc.name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc.name))
+            at_db.upsert({'name': pname, 'pc': pc['name'], 'texts': at_db_list}, (User.name == pname) & (User.pc == pc['name']))
+        await browser.close()
 
 
 def do_search():
@@ -146,7 +152,7 @@ def do_search():
     db = TinyDB('db.json')
     mp_db = db.table('mps')
     for mp in mp_db:
-        asyncio.get_event_loop().run_until_complete(ask_google(mp.name))
+        asyncio.get_event_loop().run_until_complete(ask_google(mp['name']))
     for name in get_all_powers():
         asyncio.get_event_loop().run_until_complete(ask_google(name))
     print('[do_search] End...')
@@ -163,6 +169,3 @@ def main():
         pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
     # crawl data
     do_search()
-
-if __name__ == '__main__':
-    main()
