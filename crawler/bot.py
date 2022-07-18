@@ -118,11 +118,12 @@ async def ask_google(pname):
         page = await browser.newPage()
         await stealth(page)
         for pc in tqdm(pc_db):
-            tqdm.write(f'[ask_google] Googling {pc["name"]}')
+            pc_name = pc['name']
+            tqdm.write(f'[ask_google] Googling {pc_name}')
             at_db_list = []
-            if at_db.get((User.name == pname) & (User.pc == pc['name'])):
+            if at_db.get((User.name == pname) & (User.pc == pc_name)):
                 at_db_list = at_db.get(User.name == pname)['texts']
-            for name in tqdm(pc['names']):
+            for name in tqdm(pc_name):
                 # google pname + pc.name
                 await page.goto('https://www.google.com/')
                 await page.waitForSelector('input')
@@ -143,7 +144,7 @@ async def ask_google(pname):
                     await page.evaluate('(element) => element.click()', element)
                     await asyncio.sleep(3)
             # store data to db
-            at_db.upsert({'name': pname, 'pc': pc['name'], 'texts': at_db_list}, (User.name == pname) & (User.pc == pc['name']))
+            at_db.upsert({'name': pname, 'pc': pc_name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc_name))
         await browser.close()
 
 
