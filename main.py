@@ -32,10 +32,10 @@ def main(args):
         for p in top5:
             print(p[0])
 
-        draw_magi_ui()
+#         draw_magi_ui()
 
-        for p in top5:
-            tweet_n_ig(f'{p[0]}.png', post_delay=args.delay)
+#         for p in top5:
+#             tweet_n_ig(f'{p[0]}.png', post_delay=args.delay)
 
         # sleep 20 hours
         time.sleep(20*60*60)
