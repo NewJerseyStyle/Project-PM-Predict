@@ -30,30 +30,31 @@ POWER_LIST = ['John Gore',
 def main(engine=Engine.NLTK):
     assert isinstance(engine, Engine)
 
-    pc_db = db.table('pcs')
-    at_db = db.table('articles')
-    ds_db = db.table('qips')
-    User = Query()
-    
-    ds = {}
-    for at in at_db:
-        data = []
-        for article in at.texts:
-            if at.pc in article or len([n for n in at.pc if n in article]):
-                data.append(article)
-        if engine == Engine.NLTK:
-            supportiveness, _, _ = nltk_sent.sentiment_analysis(data)
-        elif engine == Engine.HUGGINGFACE:
-            supportiveness, _, _ = deep_sent.sentiment_analysis(data)
-        activeness = 100 * float(len(data)) / float(len(at.texts))
-        powerfulness = 50
-        if at.name in POWER_LIST:
-            powerfulness = 70
-        if at.pc not in ds:
-          ds[at.pc] = {'q': at.pc, 'i': [], 'p': [], 's': []}
-        ds[at.pc]['i'].append(powerfulness)
-        ds[at.pc]['p'].append(supportiveness)
-        ds[at.pc]['s'].append(activeness)
+    with TinyDB('db.json') as db:
+        pc_db = db.table('pcs')
+        at_db = db.table('articles')
+        ds_db = db.table('qips')
+        User = Query()
+        
+        ds = {}
+        for at in at_db:
+            data = []
+            for article in at['texts']:
+                if at['pc'] in article or len([n for n in at['pc'] if n in article]):
+                    data.append(article)
+            if engine == Engine.NLTK:
+                supportiveness, _, _ = nltk_sent.sentiment_analysis(data)
+            elif engine == Engine.HUGGINGFACE:
+                supportiveness, _, _ = deep_sent.sentiment_analysis(data)
+            activeness = 100 * float(len(data)) / float(len(at['texts']))
+            powerfulness = 50
+            if at['name'] in POWER_LIST:
+                powerfulness = 70
+            if at['pc'] not in ds:
+              ds[at['pc']] = {'q': at['pc'], 'i': [], 'p': [], 's': []}
+            ds[at['pc']]['i'].append(powerfulness)
+            ds[at['pc']]['p'].append(supportiveness)
+            ds[at['pc']]['s'].append(activeness)
 
-    for q, d in ds.items():
-        ds_db.upsert(d, User.q == q)
+        for q, d in ds.items():
+            ds_db.upsert(d, User.q == q)
