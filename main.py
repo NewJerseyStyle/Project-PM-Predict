@@ -29,8 +29,10 @@ def main(args):
             raise NotImplementedError
 
         top5 = top_five_predict()
+        print('===== Most popular candidates =====')
         for p in top5:
             print(p[0])
+        print(f'===== {str(datetime.now().date())} =====')
 
 #         draw_magi_ui()
 
