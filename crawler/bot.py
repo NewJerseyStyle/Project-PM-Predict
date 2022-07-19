@@ -129,18 +129,21 @@ async def ask_google(pname):
                 await page.keyboard.press('Enter')
                 # grap all result of first 2 page
                 for i in range(2):
-                    # tqdm.write(f'[ask_google] Adding Google page {i} with {name}')
-                    await page.waitForSelector('.g')
-                    article_list = await page.querySelectorAll('.g')
-                    for element in article_list:
-                        article = await page.evaluate('(element) => element.classList.length > 1 ? "" : element.innerText', element)
-                        at_db_list.append(article)
-                    element = await page.querySelector('a#pnnext')
-                    if element is None:
-                        tqdm.write(f'[ask_google] {name} no next page, break')
-                        break
-                    await page.evaluate('(element) => element.click()', element)
-                    await asyncio.sleep(3)
+                    try:
+                        await page.waitForSelector('.g')
+                        article_list = await page.querySelectorAll('.g')
+                        for element in article_list:
+                            article = await page.evaluate('(element) => element.classList.length > 1 ? "" : element.innerText', element)
+                            at_db_list.append(article)
+                        element = await page.querySelector('a#pnnext')
+                        if element is None:
+                            tqdm.write(f'[ask_google] {name} no next page, break')
+                            break
+                        await page.evaluate('(element) => element.click()', element)
+                    except Exception as e:
+                        tqdm.write(f'[ask_google] Google page {i} with {name} got {repr(e)}')
+                    finally:
+                        await asyncio.sleep(3)
             # store data to db
             at_db.upsert({'name': pname, 'pc': pc_name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc_name))
         await browser.close()
@@ -165,6 +168,8 @@ def main():
     with TinyDB('db.json') as db:
         pc_db = db.table('pcs')
         name = 'Boris Johnson'
-        pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
+        User = Query()
+        if not pc_db.contains(User.name == name):
+            pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
     # crawl data
     do_search()
