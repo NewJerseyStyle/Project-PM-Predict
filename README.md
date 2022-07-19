@@ -3,7 +3,19 @@
 ## Goal
 Predict if johnson boris have to leave and who will become the new Prime Minister.
 
-## Way
+## Run forrest run
+```bash
+pip install -r request
+python main.py --loop
+```
+Now the script will crawl information about the members of parliament in UK and some rich guys that insterested in the
+next Prime Minister, and find the candidates of next Prime Minister.
+Then do some AI things try to figure out who is the most popular candidate.
+
+The script runs itself every 20 hours if `--loop` argument is added, to update its prediction.
+The top 5 possible candidates are printed on screen after every prediction.
+
+## Procudures
 1. Collect contact data of members of parliament from [parliament.uk](https://members.parliament.uk/members/commons)
     > Write name & twitter URL to `TinyDB`
 <!-- 2. Read Tweets of members of parliament about how they support the Prime Minister / potential candidates -->
