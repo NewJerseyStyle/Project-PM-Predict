@@ -5,3 +5,4 @@ pyppeteer_stealth
 nltk
 transformers
 numpy
+html2image
