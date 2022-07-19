@@ -119,27 +119,25 @@ async def ask_google(pname):
         await stealth(page)
         for pc in tqdm(pc_db):
             pc_name = pc['name']
-            tqdm.write(f'[ask_google] Googling {pc_name}')
+            tqdm.write(f'[ask_google] Googling with {pc_name}')
             at_db_list = []
-            if at_db.get((User.name == pname) & (User.pc == pc_name)):
-                at_db_list = at_db.get(User.name == pname)['texts']
-            for name in tqdm(pc_name):
+            for name in tqdm(pc['names']):
                 # google pname + pc.name
                 await page.goto('https://www.google.com/')
                 await page.waitForSelector('input')
-                await page.type('input', f'{pname} {name}')
+                await page.type('input', f'{pname} and {name}')
                 await page.keyboard.press('Enter')
                 # grap all result of first 2 page
                 for i in range(2):
-                    tqdm.write(f'[ask_google] Adding Google page {i} with {name}')
+                    # tqdm.write(f'[ask_google] Adding Google page {i} with {name}')
                     await page.waitForSelector('.g')
                     article_list = await page.querySelectorAll('.g')
                     for element in article_list:
                         article = await page.evaluate('(element) => element.classList.length > 1 ? "" : element.innerText', element)
-                        at_db_list.append(at_db_list)
+                        at_db_list.append(article)
                     element = await page.querySelector('a#pnnext')
                     if element is None:
-                        tqdm.write('[ask_google] No next page, break')
+                        tqdm.write(f'[ask_google] {name} no next page, break')
                         break
                     await page.evaluate('(element) => element.click()', element)
                     await asyncio.sleep(3)
