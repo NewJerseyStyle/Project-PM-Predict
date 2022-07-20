@@ -34,10 +34,10 @@ def main(args):
             print(p[0])
         print(f'===== {str(datetime.now().date())} =====')
 
-#         draw_magi_ui()
+        draw_magi_ui()
 
-#         for p in top5:
-#             tweet_n_ig(f'{p[0]}.png', post_delay=args.delay)
+        for p in top5:
+            tweet_n_ig(f'{p[0]}.png', post_delay=args.delay)
 
         # sleep 20 hours
         time.sleep(20*60*60)
