@@ -34,11 +34,13 @@ The top 5 possible candidates are printed on screen after every prediction.
 
 ### Add-on
 - Reuse UI from `magi-test.sabie.ai`
-- `Flask` app render the UI with candidate prediction
-- A bot that runs itself every 20 hours predicts top 5 candidates, capture screen of `Flask` app and post the output UI to twitter
+- `Html2Image` render the HTML UI of candidate prediction
+- A bot that runs itself every 20 hours predicts top 5 candidates
+- Capture screen of `Flask` app and post the output UI to twitter
 
 ## Technology
 To simplify the tech stack...
 - `TinyDB` will be used for data storage/share during the crawling and prediction.
 - `pyppeteer` & `pyppeteer_stealth` will be used for crawling, Googling and posting tweets
 - `NLTK` & `huggingface` will be used for sentiment analysis
+- `Html2Image` render the MAGI SYS style output predict candidate is popular or not
