@@ -12,8 +12,7 @@ async def draw():
   rs_db = db.table('ranks')
   for ds in rs_db:
     css = get_css()
-    html = get_html(name=ds['name'],
-                    data_melchior=ds['a'],
+    html = get_html(data_melchior=ds['a'],
                     data_balthasar=ds['b'],
                     data_casper=(ds['a'] + ds['b']) / 2)
     hti.screenshot(html_str=html, css_str=css, save_as=f'{ds["name"]}.png')
