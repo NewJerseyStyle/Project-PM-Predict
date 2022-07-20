@@ -32,6 +32,8 @@ The top 5 possible candidates are printed on screen after every prediction.
     > Reuse the model from `magi-test`
 7. Output the name top 5 candidates
 
+> Data passed though TinyDB 👼 (Just in case are confused because not seeing variable passing but a lot of DB R/W)
+
 ### Add-on
 - Reuse UI from `magi-test.sabie.ai`
 - `Html2Image` render the HTML UI of candidate prediction
