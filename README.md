@@ -5,7 +5,9 @@ Predict if johnson boris have to leave and who will become the new Prime Ministe
 
 ## Run forrest run
 ```bash
-pip install -r request
+git clone https://github.com/NewJerseyStyle/Project-PM-Predict.git
+cd Project-PM-Predict
+pip install -r requirements.txt
 python main.py --loop
 ```
 Now the script will crawl information about the members of parliament in UK and some rich guys that insterested in the
@@ -46,3 +48,40 @@ To simplify the tech stack...
 - `pyppeteer` & `pyppeteer_stealth` will be used for crawling, Googling and posting tweets
 - `NLTK` & `huggingface` will be used for sentiment analysis
 - `Html2Image` render the MAGI SYS style output predict candidate is popular or not
+
+## Troubleshoot
+```bash
+# Some information
+[Info] 
+# Some information
+# some tracings...
+...
+pyppeteer.errors.BrowserError: Browser closed unexpectedly:
+```
+If you have not installed Chrome on the machine before, and it is a Debian family machine.
+You need to install the dependencies of Chome.
+That is complicated and I do not worry of installing too many useless things (I used container).
+I install Chrome-stable at once.
+```bash
+sudo apt install wget
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
+sudo apt update 
+sudo apt install google-chrome-stable
+```
+
+Now check the dependencies again...
+```bash
+ldd ~/.local/share/pyppeteer/local-chromium/588429/chrome-linux/chrome | grep 'not found'
+```
+The path of `local-chromium` was printed first time you run pyppeteer (and saw the error message)
+
+And I got
+```bash
+libXss.so.1 => not found
+```
+
+Then fix it with
+```bash
+apt install libxss1
+```
