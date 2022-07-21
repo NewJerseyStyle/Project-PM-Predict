@@ -12,10 +12,10 @@ from addon import post as tweet_n_ig
 from model import Engine
 
 def main(args):
-    db = TinyDB('db.json')
-    config = db.table('config')
-    config.insert({'url': 'https://www.instagram.com/', 'user': args.ig, 'pass': args.ig_pw})
-    config.insert({'url': 'https://www.twitter.com/', 'user': args.tw, 'pass': args.tw_pw})
+    with TinyDB('db.json') as db:
+        config = db.table('config')
+        config.insert({'url': 'https://www.instagram.com/', 'user': args.ig, 'pass': args.ig_pw})
+        config.insert({'url': 'https://www.twitter.com/', 'user': args.tw, 'pass': args.tw_pw})
 
     flag = True
     while flag:
@@ -46,7 +46,8 @@ def main(args):
         if datetime.now().date() < datetime.strptime('05/09/2022', '%d/%m/%Y').date():
             flag = False
 
-    db.drop_table('config')
+    with TinyDB('db.json') as db:
+        db.drop_table('config')
 
     
 if __name__ == '__main__':
