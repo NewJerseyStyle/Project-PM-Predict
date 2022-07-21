@@ -59,7 +59,7 @@ pyppeteer.errors.BrowserError: Browser closed unexpectedly:
 If you have not installed Chrome on the machine before, and it is a Debian family machine.
 You need to install the dependencies of Chome.
 That is complicated and I do not worry of installing too many useless things (I used container).
-I install Chrome-stable at once.
+I install Chrome-stable at once. [refer to solution on StackOverflow](https://stackoverflow.com/questions/57217924/pyppeteer-errors-browsererror-browser-closed-unexpectedly)
 ```bash
 sudo apt install wget
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
