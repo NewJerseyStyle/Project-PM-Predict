@@ -51,9 +51,7 @@ To simplify the tech stack...
 
 ## Troubleshoot
 ```bash
-# Some information
-[Info] 
-# Some information
+# Some information including the path pyppeteer saved the chromium
 # some tracings...
 ...
 pyppeteer.errors.BrowserError: Browser closed unexpectedly:
