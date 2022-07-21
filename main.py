@@ -15,7 +15,7 @@ def main(args):
     with TinyDB('db.json') as db:
         config = db.table('config')
         config.insert({'url': 'https://www.instagram.com/', 'user': args.ig, 'pass': args.ig_pw})
-        config.insert({'url': 'https://www.twitter.com/', 'user': args.tw, 'pass': args.tw_pw})
+        config.insert({'url': 'https://twitter.com/i/flow/login', 'user': args.tw, 'pass': args.tw_pw})
 
     flag = True
     while flag:
