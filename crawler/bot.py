@@ -143,7 +143,7 @@ async def ask_google(pname):
                     except Exception as e:
                         tqdm.write(f'[ask_google] Google page {i} with {name} got {repr(e)}')
                     finally:
-                        await asyncio.sleep(3)
+                        await asyncio.sleep(6)
                 await browser.close()
             # store data to db
             at_db.upsert({'name': pname, 'pc': pc_name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc_name))
