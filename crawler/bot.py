@@ -114,12 +114,12 @@ async def ask_google(pname):
         pc_db = db.table('pcs')
         at_db = db.table('articles')
         User = Query()
+        browser = await launch(headless=True)
         for pc in tqdm(pc_db):
             pc_name = pc['name']
             tqdm.write(f'[ask_google] Googling with {pc_name}')
             at_db_list = []
             for name in tqdm(pc['names']):
-                browser = await launch(headless=True)
                 page = await browser.newPage()
                 await stealth(page)
                 # google pname + pc.name
@@ -144,9 +144,10 @@ async def ask_google(pname):
                         tqdm.write(f'[ask_google] Google page {i} with {name} got {repr(e)}')
                     finally:
                         await asyncio.sleep(6)
-                await browser.close()
+                await page.close()
             # store data to db
             at_db.upsert({'name': pname, 'pc': pc_name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc_name))
+        await browser.close()
 
 
 def do_search():
