@@ -114,7 +114,13 @@ async def ask_google(pname):
         pc_db = db.table('pcs')
         at_db = db.table('articles')
         User = Query()
-        browser = await launch(headless=True)
+        browser = await launch(headless=True,
+                               args=["--disable-gpu",
+                                     "--no-sandbox",
+                                     "--disable-extensions",
+                                     "--disable-dev-shm-usage",
+                                     "--no-first-run",
+                                     "--single-process"])
         for pc in tqdm(pc_db):
             pc_name = pc['name']
             tqdm.write(f'[ask_google] Googling with {pc_name}')
