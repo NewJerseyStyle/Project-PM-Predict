@@ -40,7 +40,7 @@ The top 5 possible candidates are printed on screen after every prediction.
 - Reuse UI from `magi-test.sabie.ai`
 - `Html2Image` render the HTML UI of candidate prediction
 - A bot that runs itself every 20 hours predicts top 5 candidates
-- Capture screen of `Flask` app and post the output UI to twitter
+- Post the `Html2Image` rendered image with caption (the top 1 candidate) to twitter
 
 ## Technology
 To simplify the tech stack...
