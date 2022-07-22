@@ -23,7 +23,11 @@ async def tw_poster(url, u, p, filename):
   # post with image
   await page.goto('https://twitter.com/compose/tweet')
   await waitForSelector('div[role="textbox"]')
-  await page.type('div[role="textbox"]', 'text')
+  await page.type('div[role="textbox"]',
+    f'''#MAGI_SYS\n 
+    Lets guess, most protential candidate of the next Prime Minister 
+    of UK today seems to be...\n 
+    {filename.split('.')[0]}''')
   basepath = os.getcwd()
   element = await page.querySelector('input[type="file"]')
   element.uploadFile(os.path.join(basepath, filename))
