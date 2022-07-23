@@ -82,6 +82,7 @@ def get_html(data_casper, data_balthasar, data_melchior):
                 }
                 document.getElementById('status').innerHTML = resultText;
             }
+            computing();
         </script>
     </div>
   ''' %(data_casper, data_balthasar, data_melchior)
