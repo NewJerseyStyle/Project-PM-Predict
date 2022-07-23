@@ -1,4 +1,3 @@
-import time
 import argparse
 from datetime import datetime
 
@@ -40,10 +39,7 @@ def main(args):
         draw_magi_ui()
 
         if not args.dry_run:
-            tweet_n_ig(f'{top5[0][0]}.png', post_delay=args.delay)
-
-            # sleep 15 hours
-            time.sleep(15*60*60)
+            tweet_n_ig(f'{top5[0][0]}.png')
 
         flag = args.loop
         if datetime.now().date() < datetime.strptime('05/09/2022', '%d/%m/%Y').date():
@@ -62,8 +58,6 @@ if __name__ == '__main__':
     parser.add_argument('--ig-pw', help='Instagram password')
     parser.add_argument('--tw', help='Twitter username')
     parser.add_argument('--tw-pw', help='Twitter password')
-    parser.add_argument('--delay', default=1800,
-                        help='Interval in seconds between posting IG/Tweet')
     parser.add_argument('--loop', action='store_true',
                         help='Sleep 20 hours & loop until Sep 4th 2022')
     parser.add_argument('--dry-run', action='store_true',
