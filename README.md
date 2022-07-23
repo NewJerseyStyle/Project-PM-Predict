@@ -39,7 +39,7 @@ The top 5 possible candidates are printed on screen after every prediction.
 ### Add-on
 - Reuse UI from `magi-test.sabie.ai`
 - `Html2Image` render the HTML UI of candidate prediction
-- A bot that runs itself every 20 hours predicts top 5 candidates
+- A bot that keeps itself running and predicts top 5 candidates
 - Post the `Html2Image` rendered image with caption (the top 1 candidate) to twitter
 
 ## Technology
@@ -50,6 +50,7 @@ To simplify the tech stack...
 - `Html2Image` render the MAGI SYS style output predict candidate is popular or not
 
 ## Troubleshoot
+### Runtime error
 ```bash
 # Some information including the path pyppeteer saved the chromium
 # some tracings...
@@ -83,3 +84,6 @@ Then fix it with
 ```bash
 apt install libxss1
 ```
+
+### Crawling takes more than two days
+With Google search rate limit this cannot be resolved.
