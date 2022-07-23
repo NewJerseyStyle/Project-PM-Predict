@@ -90,3 +90,9 @@ apt install libxss1
 ### Crawling takes more than two days
 With Google search rate limit this cannot be resolved.
 Using VPN / Proxies may help. You can fork and patch.
+
+A solution can be sharing a database server with many crawling workers.
+- A timestamp should be added to each set of crawled data.
+- For each worker connected to the database server, will check if any data lifetime longer than 20 hours.
+- For any data older than 20 hours, worker will have to crawl on Internet to update that set of data.
+- If all data lifetime within 24 hours, prediction shall be made at once.

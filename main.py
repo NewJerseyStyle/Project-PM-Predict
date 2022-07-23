@@ -15,7 +15,6 @@ def main(args):
 
     with TinyDB('db.json') as db:
         config = db.table('config')
-        config.insert({'url': 'https://www.instagram.com/', 'user': args.ig, 'pass': args.ig_pw})
         config.insert({'url': 'https://twitter.com/i/flow/login', 'user': args.tw, 'pass': args.tw_pw})
 
     flag = True
@@ -54,8 +53,6 @@ if __name__ == '__main__':
     parser.add_argument('--engine', type=str,
                         default='NLTK', choices=['HUGGINGFACE', 'NLTK'],
                         help='Engine to be used in sentiment analysis')
-    parser.add_argument('--ig', help='Instagram username')
-    parser.add_argument('--ig-pw', help='Instagram password')
     parser.add_argument('--tw', help='Twitter username')
     parser.add_argument('--tw-pw', help='Twitter password')
     parser.add_argument('--loop', action='store_true',
