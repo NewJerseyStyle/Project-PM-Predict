@@ -3,6 +3,8 @@
 ## Goal
 Predict if johnson boris have to leave and who will become the new Prime Minister.
 
+> ⚠️ Crawling data from Internet takes forever 👼 (~3 days) Patch it or just wait...
+
 ## Run forrest run
 ```bash
 git clone https://github.com/NewJerseyStyle/Project-PM-Predict.git
@@ -87,3 +89,4 @@ apt install libxss1
 
 ### Crawling takes more than two days
 With Google search rate limit this cannot be resolved.
+Using VPN / Proxies may help. You can fork and patch.
