@@ -37,7 +37,7 @@ async def tw_poster(url, u, p, filename):
   # clean up
   await browser.close()
 
-def main(filename, delay):
+def main(filename):
   with TinyDB('db.json') as db:
     config = db.table('config')
     for site in config:
