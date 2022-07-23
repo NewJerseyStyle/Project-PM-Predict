@@ -31,8 +31,8 @@ def run(k=5):
             x = np.array(l)
             results.append((ds['q'],
                             ((weighted_mean(x) + weighted_median(x)) / 2 +
-                              max(weighted_mean(x),
-                              weighted_median(x)))
+                              max(weighted_mean(x), weighted_median(x))),
+                            max(weighted_mean(x), weighted_median(x))
                             ))
         results.sort(key=takeSecond)
         topk = list(reversed(results[-k:]))
