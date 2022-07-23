@@ -79,7 +79,7 @@ async def download_all_candidates():
         pc_list = await page.querySelectorAll('.selTxt')
         for element in pc_list:
             name = await page.evaluate('(element) => element.innerText', element)
-            pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
+            pc_db.insert({'name': name})
         print(f'[download_all_candidates] Added {len(pc_list)} PM candidates')
         await asyncio.sleep(1)
         print('[download_all_candidates] End...')
@@ -123,37 +123,36 @@ async def ask_google(pname):
                                      "--single-process"])
         for pc in tqdm(pc_db):
             pc_name = pc['name']
-            tqdm.write(f'[ask_google] Googling with {pc_name}')
+#             tqdm.write(f'[ask_google] Googling with {pc_name}')
             at_db_list = []
-            for name in tqdm(pc['names']):
-                page = await browser.newPage()
-                await stealth(page)
-                # google pname + pc.name
-                await page.goto('https://www.google.com/')
-                await page.waitForSelector('input')
-                await page.type('input', f'{pname} and {name}')
-                await page.keyboard.press('Enter')
-                # grap all result of first 2 page
-                for i in range(2):
-                    try:
-                        await page.waitForSelector('.g')
-                        article_list = await page.querySelectorAll('.g')
-                        for element in article_list:
-                            article = await page.evaluate('(element) => element.classList.length > 1 ? "" : element.innerText', element)
-                            at_db_list.append(article)
-                        element = await page.querySelector('a#pnnext')
-                        if element is None:
-                            tqdm.write(f'[ask_google] {name} no next page, break')
-                            break
-                        await page.evaluate('(element) => element.click()', element)
-                    except Exception as e:
-                        tqdm.write(f'[ask_google] Google page {i} with {name} got {repr(e)}')
-                    finally:
-                        await asyncio.sleep(random.randint(3, 6))
-                await page.close()
-                await asyncio.sleep(random.randint(30, 40))
-            # store data to db
-            at_db.upsert({'name': pname, 'pc': pc_name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc_name))
+            page = await browser.newPage()
+            await stealth(page)
+            # google pname + pc.name
+            await page.goto('https://www.google.com/')
+            await page.waitForSelector('input')
+            await page.type('input', f'{pname} and {pc_name}')
+            await page.keyboard.press('Enter')
+            # grap all result of first 2 page
+            for i in range(2):
+                try:
+                    await page.waitForSelector('.g')
+                    article_list = await page.querySelectorAll('.g')
+                    for element in article_list:
+                        article = await page.evaluate('(element) => element.classList.length > 1 ? "" : element.innerText', element)
+                        at_db_list.append(article)
+                    element = await page.querySelector('a#pnnext')
+                    if element is None:
+                        tqdm.write(f'[ask_google] {pname} + {pc_name} no next page, break')
+                        break
+                    await page.evaluate('(element) => element.click()', element)
+                except Exception as e:
+                    tqdm.write(f'[ask_google] Google page {i} with {pc_name} got {repr(e)}')
+                finally:
+                    await asyncio.sleep(3)
+            await page.close()
+            await asyncio.sleep(random.randint(30, 40))
+        # store data to db
+        at_db.upsert({'name': pname, 'pc': pc_name, 'texts': at_db_list}, (User.name == pname) & (User.pc == pc_name))
         await browser.close()
 
 
@@ -161,9 +160,9 @@ def do_search():
     print('[do_search] Start')
     db = TinyDB('db.json')
     mp_db = db.table('mps')
-    for mp in mp_db:
+    for mp in tqdm(mp_db, desc='Googleing supporting MPs'):
         asyncio.get_event_loop().run_until_complete(ask_google(mp['name']))
-    for name in get_all_powers():
+    for name in tqdm(get_all_powers(), desc='Googleing supporting powers'):
         asyncio.get_event_loop().run_until_complete(ask_google(name))
     print('[do_search] End...')
 
@@ -178,6 +177,6 @@ def main():
         name = 'Boris Johnson'
         User = Query()
         if not pc_db.contains(User.name == name):
-            pc_db.insert({'name': name, 'names': list(name.split()) + [name] })
+            pc_db.insert({'name': name})
     # crawl data
     do_search()
