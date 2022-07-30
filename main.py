@@ -11,7 +11,7 @@ from addon import post as tweet_n_ig
 from model import Engine
 
 def main(args):
-    assert args.loop != args.dry_run
+    assert not( args.loop == args.dry_run and args.loop == True)
 
     with TinyDB('db.json') as db:
         config = db.table('config')
